@@ -1,8 +1,8 @@
 <#
 
-This is a Find and Replace PowerShell Script for cleaning Word-Generated HTML.
+This is a Find and Replace PowerShell Script for cleaning Word-Filtered HTML.
 
-Many Thanks for Michael Clark for being a baller.
+Many Thanks for Michael Clark.
 
 #>
 
