@@ -60,8 +60,8 @@ Function DoIt {
           $Start = "position:relative;top:-4.5pt'>"
           $End = "</span>"
           $Pattern = $Start + "(.*?)" + $End
-          $NewStart = "position:relative;top:-4.5pt'>" + "<sup>"
-          $NewEnd = "</sup>" + "</span>"
+          $NewStart = "position:relative;top:-4.5pt'><sup>"
+          $NewEnd = "</sup></span>"
           .\ReplaceIT.ps1 -File $Child.FullName -AllMatches -Start $Start -End $End -Pattern $Pattern -NewStart $NewStart -NewEnd $NewEnd
 
           # Standardize Subscript Tags
@@ -73,8 +73,8 @@ Function DoIt {
           $Start = "position:relative;top:2.0pt'>"
           $End = "</span>"
           $Pattern = $Start + "(.*?)" + $End
-          $NewStart = "position:relative;top:2.0pt'>" + "<sub>"
-          $NewEnd = "</sub>" + "</span>"
+          $NewStart = "position:relative;top:2.0pt'><sub>"
+          $NewEnd = "</sub></span>"
           .\ReplaceIT.ps1 -File $Child.FullName -AllMatches -Start $Start -End $End -Pattern $Pattern -NewStart $NewStart -NewEnd $NewEnd
 
           .\ReplaceIT.ps1 -File $Child.FullName -Find "</span>`r`n" -Replace "</span>"
@@ -82,14 +82,8 @@ Function DoIt {
           # Removes class, align, width, and style attributes, borders and cellpadding and spacing, span tags, and empty <p> tags
           .\ReplaceIT.ps1 -File $Child.FullName -Find "\s+class=[^ >]*|\s+align=[^ >]*|\s+width=[^ >]*|\s+valign=[^ >]*|\s+style='+[^']*'|</?span+\s+[^>]*>|</span>|&nbsp;|<p></p>|\s+border=[^ >]*|\s+cellpadding=[^ >]*|\s+cellspacing=[^ >]*" -Replace ""
 
-          # Removes Style Declaration
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "<style>(.*`r`n)*</style>" -Replace ""
-
-          # Removes Leftover Empty <p> tags, and nested <b> and <i> tags
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "<p></p>|</b><b>|</i><i>" -Replace ""
-
-          # Removes Divs and Breaks
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "<div>|</div>|<br clear=all>" -Replace ""
+          # Removes style declaration, leftover empty and nested <p>, <b>, and <i> tags, divs, and breaks
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "<style>(.*`r`n)*</style>|<p></p>|</b><b>|</i><i>|<div>|</div>|<br clear=all>" -Replace ""
 
           # Change <b> and <i> to <strong> and <em>
           .\ReplaceIT.ps1 -File $Child.FullName -Find "<i>" -Replace "<em>"
@@ -97,7 +91,7 @@ Function DoIt {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "<b>" -Replace "<strong>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "</b>" -Replace "</strong>"
 
-          # M$ Spacing Character - Change -Replace to " " to maintain Spacing
+          # M$ Spacing Character
           .\ReplaceIT.ps1 -File $Child.FullName -Find " " -Replace ""
 
           # M$ Specific ASCII to HTML 128 - 159
@@ -128,14 +122,14 @@ Function DoIt {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "Ž" -Replace "&#381;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "&#142;" -Replace "&#381;"
 
-          # Uncomment the line below to eliminate single "Smart Quotes"
+          # Uncomment to eliminate single "Smart Quotes"
           # .\ReplaceIT.ps1 -File $Child.FullName -Find "‘|’" -Replace "'"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "‘" -Replace "&#8216;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "&#145;" -Replace "&#8216;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "’" -Replace "&#8217;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "&#146;" -Replace "&#8217;"
 
-          # Uncomment the line below to eliminate "Smart Quotes"
+          # Uncomment to eliminate "Smart Quotes"
           # .\ReplaceIT.ps1 -File $Child.FullName -Find '“|”' -Replace '"'
           .\ReplaceIT.ps1 -File $Child.FullName -Find '“' -Replace "&#8220;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "&#147;" -Replace "&#8220;"
@@ -166,23 +160,16 @@ Function DoIt {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "&#159;" -Replace "&#376;"
           # END M$ Specific ASCII to HTML 128 - 159
 
-          # Remove Stubborn Line Breaks
+          # Remove Line Breaks
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n `r`n" -Replace "`r`n"
-
-          # Remove Excessive Line Breaks
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
 
-          # Uncomment to Remove more Line Breaks
+          # Fewer Line Breaks
           # .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n" -Replace "`r`n"
-
-          # Remove leftover "position:relative;top:-4.5pt'>"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:-4.5pt'>" -Replace ""
-          # Remove leftover "position:relative;top:2.0pt'>"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:2.0pt'>" -Replace ""
 
           # ASCII codes to HTML
           .\ReplaceIT.ps1 -File $Child.FullName -Find "¡" -Replace "&#161;"
@@ -284,6 +271,9 @@ Function DoIt {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "É" -Replace "&#201;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "Í" -Replace "&#205;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "Ó" -Replace "&#211;"
+
+          # Remove leftover "position:relative;top:-4.5pt'>" and "position:relative;top:2.0pt'>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:-4.5pt'>|position:relative;top:2.0pt'>" -Replace ""
         }
       }
     }
