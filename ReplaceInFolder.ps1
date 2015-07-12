@@ -7,11 +7,9 @@ Many Thanks for Michael Clark.
 ====================
 TO DO
 
-1. Tables
-2. Lists
-3. Super and Subscripts - better than current 90%
-4. Implement user confirmation - i.e. "would you like to run ReplaceIT on file_a?"
-
+1. Table Formatting
+2. Bullets to Lists
+3. Better super and subscript checking
 ====================
 
 #>
