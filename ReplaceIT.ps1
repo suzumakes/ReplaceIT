@@ -4,6 +4,12 @@ This is a Find and Replace PowerShell Script for cleaning Word-Filtered HTML.
 
 Many Thanks for Michael Clark.
 
+====================
+TO DO
+
+1. Limit recursion to 1 level
+====================
+
 #>
 
 Param (
@@ -15,7 +21,8 @@ Param (
   [string]$Start,
   [string]$End,
   [string]$NewStart,
-  [string]$NewEnd
+  [string]$NewEnd,
+  [switch]$VB
 )
 
 Function SuperScript {
@@ -42,18 +49,23 @@ Function SuperScript {
     $ReplaceWith = $NewStart + $Matches[1] + $NewEnd
     $FileContents = $FileContents -Replace [regex]::escape($Item), $ReplaceWith
 
-    write-host $Item  "---->"  $ReplaceWith
+    If ( $VB ) {
+      write-host $Item  "-->"  $ReplaceWith  
+    } Else {
+      write-host "Replaced all $Item with $ReplaceWith"
     }
 
     If ($Update) {
       $FileContents|set-content $file
     }
+  }
 }
+
   
 $FileContents = get-content $file -Erroraction silentlycontinue -ErrorVariable NotFound
 
 If ($NotFound.Count -eq "1") {
-  write-host "$file not found. Please check location and filename."
+  write-host "$file not found -- check location and filename"
   break
 }
 
@@ -75,22 +87,31 @@ if (!($AllMatches)) {
 
     if (!(test-path $newfile)) {
       copy-item $file $newfile
+      write-host "Saved backup to $newfile"
     }
 
     $replacewith|set-content $file
-    write-host "Replaced all instances of $find to $Replace in $file and saved backup to $newfile"
-    "Replaced all instances of $find to $Replace in $file and saved backup to $newfile" | out-file $logfile -append
+    If ( $VB ) {
+      write-host "Replaced all $find with $Replace"
+      "Replaced all $find with $Replace" | out-file $logfile -append
+    } Else {
+      "Replaced all $find with $Replace" | out-file $logfile -append
+    }
 
   } Else {
 
-      write-host "1>$find not found in $file"
-      "$find not found in $file" | out-file $logfile -append
-
+    If ( $VB ) {
+      write-host "1>$find not found"
+      "$find not found" | out-file $logfile -append
+    } Else {
+      "$find not found" | out-file $logfile -append
     }
+
+  }
 }
 
 Else {
-  write-host "Super/Subscript Find and Replace"
+  write-host "Replacing Super and Subscripts"
   SuperScript -FileContents $FileContents -Pattern $Pattern -Start $Start -End $End -NewStart $NewStart -NewEnd $NewEnd -File $File
 }
 

@@ -10,35 +10,36 @@ TO DO
 1. Table Formatting
 2. Bullets to Lists
 3. Better super and subscript checking
+4. Strict case sensitivity for Foreign Language Characters
 ====================
 
 #>
 
 Param ( $Folder )
 
-Function DoIt {
+$Response = read-host "Convert " + $Child + "(Y/n)?"
 
-  Param ( $Folder )
+If ($Response.substring(0,1).toLower() -eq "y") {
 
-  $Folders = Get-ChildItem $Folder
+  Function DoIt {
 
-  ForEach ($Child in $Folders) {
+    Param ( $Folder )
 
-    If ($Child.PSIsContainer) {
-      DoIt $Child.FullName
-    }
+    $Folders = Get-ChildItem $Folder
 
-    Else {
+    ForEach ($Child in $Folders) {
 
-      $Extensions = "/.htm/"
+      If ($Child.PSIsContainer) {
+        DoIt $Child.FullName
+      }
 
-      $FileExtension = "/" + $Child.Extension + "/"
+      Else {
 
-      If ($Extensions.Contains($FileExtension) -and $FileExtension -gt "") {
+        $Extensions = "/.htm/"
 
-        $Response = read-host "Convert " + $Child + "(Y/n)?"
+        $FileExtension = "/" + $Child.Extension + "/"
 
-        If ($Response.substring(0,1).toLower() -eq "y") {
+        If ($Extensions.Contains($FileExtension) -and $FileExtension -gt "") {
 
           # Arrange all lines to end with closing tags
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n" -Replace "`r`n"
@@ -203,32 +204,6 @@ Function DoIt {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "¿" -Replace "&#191;"
 
           # Foreign Language Characters
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "À" -Replace "&#192;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Á" -Replace "&#193;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ã" -Replace "&#195;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ä" -Replace "&#196;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Å" -Replace "&#197;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Æ" -Replace "&#198;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ç" -Replace "&#199;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "È" -Replace "&#200;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ê" -Replace "&#202;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ë" -Replace "&#203;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ì" -Replace "&#204;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Î" -Replace "&#206;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ï" -Replace "&#207;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ð" -Replace "&#208;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ñ" -Replace "&#209;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ò" -Replace "&#210;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ô" -Replace "&#212;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Õ" -Replace "&#213;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ö" -Replace "&#214;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "×" -Replace "&#215;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ø" -Replace "&#216;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ù" -Replace "&#217;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ú" -Replace "&#218;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Û" -Replace "&#219;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ü" -Replace "&#220;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ý" -Replace "&#221;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "Þ" -Replace "&#222;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "ß" -Replace "&#223;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "à" -Replace "&#224;"
@@ -262,13 +237,6 @@ Function DoIt {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "ü" -Replace "&#252;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "ý" -Replace "&#253;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "þ" -Replace "&#254;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ÿ" -Replace "&#255;"
-
-          # These are rarely needed
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Â" -Replace "&#194;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "É" -Replace "&#201;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Í" -Replace "&#205;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Ó" -Replace "&#211;"
 
           # Remove leftover "position:relative;top:-4.5pt'>" and "position:relative;top:2.0pt'>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:-4.5pt'>|position:relative;top:2.0pt'>" -Replace ""
