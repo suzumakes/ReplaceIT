@@ -17,11 +17,15 @@ Remember in PowerShell the options go after the target directory or file.
 
 Verbose - The default is pretty quiet about what's happening to your files, verbose will fill your stdout with messages about everything it can and can't find.
 
-ReplaceIT scrapes away 99% of Word's horrible useless code, leaving you with more free time and fewer headaches. As a bonus it's pretty good at formatting the resulting code too.
+### What it Does
 
-ReplaceIT creates a backup (.bak) of every .htm file in the directory you specify. You can edit the acceptable extensions to add more if you like.
+Creates a backup (.bak) of every .htm file in the directory you specify. You can edit the acceptable extensions to add more if you like.
 
-ReplaceIT also creates a log file of all the changes it makes, alter the directory on line 77 of ReplaceIT.ps1 to put the logs where you like. 
+Creates a log file of all the changes it makes, alter the directory on line 77 of ReplaceIT.ps1 to put the logs where you like. 
+
+Scrapes away 99% of Word's horrible useless code, leaving you with more free time and fewer headaches.
+
+It's pretty good at formatting the resulting code into something workable too.
 
 ###Todo
 
