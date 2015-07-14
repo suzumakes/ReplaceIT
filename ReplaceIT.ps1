@@ -42,38 +42,35 @@ Function SuperScript {
 
   $Update = $false
 
-  ForEach ($Item in $MyMatches) {
+  ForEach ( $Item in $MyMatches ) {
     $Update = $true
     $ThisMatch = $Item -Match $Pattern
 
     $ReplaceWith = $NewStart + $Matches[1] + $NewEnd
-    $FileContents = $FileContents -Replace [regex]::escape($Item), $ReplaceWith
+    $FileContents = $FileContents -Replace [regex]::escape( $Item ), $ReplaceWith
 
     If ( $VB ) {
-      write-host $Item  "-->"  $ReplaceWith  
-    } Else {
-      write-host "Replaced all $Item with $ReplaceWith"
+      write-host "Replacing " $Item  " --> "  $ReplaceWith
     }
 
-    If ($Update) {
+    If ( $Update ) {
       $FileContents|set-content $file
     }
   }
 }
-
   
 $FileContents = get-content $file -Erroraction silentlycontinue -ErrorVariable NotFound
 
-If ($NotFound.Count -eq "1") {
-  write-host "$file not found -- check location and filename"
+If ( $NotFound.Count -eq "1" ) {
+  write-host "$file not found -- Please check location and filename"
   break
 }
 
 $SearchString = "$Find"
 
-if (!($AllMatches)) {
+if ( !( $AllMatches ) ) {
 
-  $FileContents = ([string]::join("`r`n",$filecontents))
+  $FileContents = ( [string]::join( "`r`n",$filecontents ) )
 
   $Found = $fileContents -match "$searchstring"
 
@@ -81,16 +78,17 @@ if (!($AllMatches)) {
 
   $newfile = $file + ".bak"
 
-  If ($Found) {
+  If ( $Found ) {
 
     $replacewith = $FileContents -replace $SearchString,$Replace
 
-    if (!(test-path $newfile)) {
-      copy-item $file $newfile
+    if ( !( test-path $newfile ) ) {
+      copy-item $file $newfile 
       write-host "Saved backup to $newfile"
     }
 
     $replacewith|set-content $file
+    
     If ( $VB ) {
       write-host "Replaced all $find with $Replace"
       "Replaced all $find with $Replace" | out-file $logfile -append
@@ -101,7 +99,7 @@ if (!($AllMatches)) {
   } Else {
 
     If ( $VB ) {
-      write-host "1>$find not found"
+      write-host ">$find not found"
       "$find not found" | out-file $logfile -append
     } Else {
       "$find not found" | out-file $logfile -append
@@ -111,7 +109,7 @@ if (!($AllMatches)) {
 }
 
 Else {
-  write-host "Replacing Super and Subscripts"
+  write-host "Replacing Superscripts and Subscripts"
   SuperScript -FileContents $FileContents -Pattern $Pattern -Start $Start -End $End -NewStart $NewStart -NewEnd $NewEnd -File $File
 }
 

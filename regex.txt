@@ -1,5 +1,0 @@
-There are a lot of Regex commands in the Script, and many more that I have scattered throughout a few different files. I'll endeavor to collect and explain them here.
-
-Capture anything between 2 Tags
-
-<tag>(.*`r`n)*</tag>

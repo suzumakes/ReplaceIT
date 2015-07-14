@@ -17,9 +17,15 @@ TO DO
 
 Param ( $Folder )
 
-$Response = read-host "Convert " + $Child + "(Y/n)?"
+$Folders = Get-ChildItem $Folder
 
-If ($Response.substring(0,1).toLower() -eq "y") {
+ForEach ( $Child in $Folders ) {
+  write-host "$Child"
+}
+
+$Response = read-host "Convert these files? (Y/n)"
+
+If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
 
   Function DoIt {
 
@@ -27,9 +33,9 @@ If ($Response.substring(0,1).toLower() -eq "y") {
 
     $Folders = Get-ChildItem $Folder
 
-    ForEach ($Child in $Folders) {
+    ForEach ( $Child in $Folders ) {
 
-      If ($Child.PSIsContainer) {
+      If ( $Child.PSIsContainer ) {
         DoIt $Child.FullName
       }
 
@@ -39,7 +45,7 @@ If ($Response.substring(0,1).toLower() -eq "y") {
 
         $FileExtension = "/" + $Child.Extension + "/"
 
-        If ($Extensions.Contains($FileExtension) -and $FileExtension -gt "") {
+        If ( $Extensions.Contains( $FileExtension ) -and $FileExtension -gt "" ) {
 
           # Arrange all lines to end with closing tags
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n" -Replace "`r`n"
@@ -237,6 +243,7 @@ If ($Response.substring(0,1).toLower() -eq "y") {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "ü" -Replace "&#252;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "ý" -Replace "&#253;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "þ" -Replace "&#254;"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "ÿ" -Replace "&#255;"
 
           # Remove leftover "position:relative;top:-4.5pt'>" and "position:relative;top:2.0pt'>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:-4.5pt'>|position:relative;top:2.0pt'>" -Replace ""
