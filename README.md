@@ -21,7 +21,7 @@ Verbose - The default is pretty quiet about what's happening to your files, verb
 
 Creates a backup (.bak) of every .htm file in the directory you specify. You can edit the acceptable extensions to add more if you like.
 
-Creates a log file of all the changes it makes, alter the directory on line 77 of ReplaceIT.ps1 to put the logs where you like. 
+Creates a log file of all the changes it makes. Change line 77 of ReplaceIT.ps1 to put the logs wherever you like.
 
 Scrapes away 99% of Word's horrible useless code, leaving you with more free time and fewer headaches.
 
@@ -41,5 +41,5 @@ Fork ReplaceIT and submit a pull request if you want to contribute! The Todo's a
 
 It would make me really happy to know someone else benefits from this, so if it helps you out let me know!
 
-Many thanks to Michael Clark for his expertise and help. If you're here let me know so I can properly credit you. Seriously my man.
+Many thanks to Michael Clark for his expertise and help. If you're here let me know so I can link to and credit you.
 

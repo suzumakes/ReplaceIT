@@ -22,7 +22,8 @@ Param (
   [string]$End,
   [string]$NewStart,
   [string]$NewEnd,
-  [switch]$VB
+  [switch]$Vb,
+  [switch]$Log
 )
 
 Function SuperScript {
@@ -33,12 +34,11 @@ Function SuperScript {
     $End,
     $NewStart,
     $NewEnd,
-    $File
+    $File,
+    $Vb
   )
 
   $MyMatches = $FileContents | Select-String -Pattern $Pattern -AllMatches
-
-  write-host $FileContents.Length
 
   $Update = $false
 
@@ -49,7 +49,7 @@ Function SuperScript {
     $ReplaceWith = $NewStart + $Matches[1] + $NewEnd
     $FileContents = $FileContents -Replace [regex]::escape( $Item ), $ReplaceWith
 
-    If ( $VB ) {
+    If ( $Vb ) {
       write-host "Replacing " $Item  " --> "  $ReplaceWith
     }
 
@@ -74,7 +74,9 @@ if ( !( $AllMatches ) ) {
 
   $Found = $fileContents -match "$searchstring"
 
-  $logfile = "c:\temp\ReplaceITLog-" + $timestamp + ".txt"
+  If ( $Log ) {
+    $logfile = ".\ReplaceITLog-" + $timestamp + ".log"
+  }
 
   $newfile = $file + ".bak"
 
@@ -89,20 +91,28 @@ if ( !( $AllMatches ) ) {
 
     $replacewith|set-content $file
     
-    If ( $VB ) {
-      write-host "Replaced all $find with $Replace"
-      "Replaced all $find with $Replace" | out-file $logfile -append
-    } Else {
-      "Replaced all $find with $Replace" | out-file $logfile -append
+    If ( $Log ) {
+
+      If ( $Vb ) {
+        write-host "Replaced all $find with $Replace"
+        "Replaced all $find with $Replace" | out-file $logfile -append
+      } Else {
+        "Replaced all $find with $Replace" | out-file $logfile -append
+      }
+
     }
 
   } Else {
 
-    If ( $VB ) {
-      write-host ">$find not found"
-      "$find not found" | out-file $logfile -append
-    } Else {
-      "$find not found" | out-file $logfile -append
+    If ( $Log ) {
+
+       If ( $Vb ) {
+        write-host ">$find not found"
+        "$find not found" | out-file $logfile -append
+       } Else {
+        "$find not found" | out-file $logfile -append
+       }
+
     }
 
   }
