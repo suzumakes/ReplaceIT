@@ -251,6 +251,11 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
       }
     }
   }
+} Else {
+
+  write-host "Alright"
+  break
+
 }
 
 DoIt $Folder

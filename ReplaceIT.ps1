@@ -8,6 +8,7 @@ Many Thanks for Michael Clark.
 TO DO
 
 1. Limit recursion to 1 level
+2. Call these options from ReplaceInFolder
 ====================
 
 #>
@@ -22,7 +23,6 @@ Param (
   [string]$End,
   [string]$NewStart,
   [string]$NewEnd,
-  [switch]$Vb,
   [switch]$Log
 )
 
@@ -35,7 +35,7 @@ Function SuperScript {
     $NewStart,
     $NewEnd,
     $File,
-    $Vb
+    $Log
   )
 
   $MyMatches = $FileContents | Select-String -Pattern $Pattern -AllMatches
@@ -49,8 +49,9 @@ Function SuperScript {
     $ReplaceWith = $NewStart + $Matches[1] + $NewEnd
     $FileContents = $FileContents -Replace [regex]::escape( $Item ), $ReplaceWith
 
-    If ( $Vb ) {
-      write-host "Replacing " $Item  " --> "  $ReplaceWith
+    If ( $Log ) {
+      $logfile = ".\ReplaceITLog-" + $timestamp + ".txt"
+      "Replaced $Item --> $ReplaceWith" | out-file $logfile -append
     }
 
     If ( $Update ) {
@@ -75,7 +76,7 @@ if ( !( $AllMatches ) ) {
   $Found = $fileContents -match "$searchstring"
 
   If ( $Log ) {
-    $logfile = ".\ReplaceITLog-" + $timestamp + ".log"
+    $logfile = ".\ReplaceITLog-" + $timestamp + ".txt"
   }
 
   $newfile = $file + ".bak"
@@ -92,30 +93,17 @@ if ( !( $AllMatches ) ) {
     $replacewith|set-content $file
     
     If ( $Log ) {
-
-      If ( $Vb ) {
-        write-host "Replaced all $find with $Replace"
-        "Replaced all $find with $Replace" | out-file $logfile -append
-      } Else {
-        "Replaced all $find with $Replace" | out-file $logfile -append
-      }
-
+      "Replaced all $find with $Replace" | out-file $logfile -append
     }
 
   } Else {
 
     If ( $Log ) {
-
-       If ( $Vb ) {
-        write-host ">$find not found"
-        "$find not found" | out-file $logfile -append
-       } Else {
-        "$find not found" | out-file $logfile -append
-       }
-
+      "$find not found" | out-file $logfile -append
     }
 
-  }
+}
+
 }
 
 Else {
