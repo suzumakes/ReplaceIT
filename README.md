@@ -1,45 +1,41 @@
 # ReplaceIT
 
-There are a million reasons NOT to use Regex to parse Word-Filtered HTML. There are some times when this is your only option, and this will help.
+There are a million reasons NOT to use Regex to parse HTML.
+
+Word-Filtered HTML is a different story. If you have to parse this garbage you probably don't have a lot of other options. These scripts will help immensely.
 
 This is a set of PowerShell Scripts, just put ReplaceInFolder and ReplaceIT in a directory together and open PowerShell.
 
-	cd C:\Users\YourUser\YourFilePath\ReplaceIT
-	.\ReplaceInFolder.ps1 .\YourFolder
+	cd C:\Users\YourUser\YourFilePath\ReplaceIT\
+	.\ReplaceInFolder.ps1 .\YourFolder--or--File
 
-ReplaceIT will list all of the .htm files in your folder, and ask whether or not you would like to convert them. (You can just hit enter to accept)
+ReplaceIT will list all of the .htm files in your folder, and ask whether or not you would like to convert them.
+
+###Done
+
+Creates a backup of every .htm it converts in the directory you specify. Edit ReplaceInFolder line 49 to add more.
+
+Cuts away most of M$'s Word's attempts at HTML styling, properly tags ~90% of Super/Subscripts.
+
+Formats the resulting code into something readable and workable.
 
 ###Options
 
-Remember in PowerShell the options go after the target directory or file.
+	.\ReplaceInFolder.ps1 .\TargetDirectory -log
 
-	.\ReplaceInFolder.ps1 .\TargetDirectory -vb
-
-Verbose - The default is pretty quiet about what's happening to your files, verbose will fill your stdout with messages about everything it can and can't find.
-
-### What it Does
-
-Creates a backup (.bak) of every .htm file in the directory you specify. You can edit the acceptable extensions to add more if you like.
-
-Creates a log file of all the changes it makes. Change line 77 of ReplaceIT.ps1 to put the logs wherever you like.
-
-Scrapes away 99% of Word's horrible useless code, leaving you with more free time and fewer headaches.
-
-It's pretty good at formatting the resulting code into something workable too.
+Log - Logs all operations to a logfile in the current directory.
 
 ###Todo
 
 1. Limit recursion to 1 level
 2. Table Formatting
 3. Bullets to Lists
-4. Better super and subscript checking
+4. Better Super/Subscript checking
 5. Strict case sensitivity for Foreign Language Characters
 
-###Want to Contribute?
+###Clone Me
 
-Fork ReplaceIT and submit a pull request if you want to contribute! The Todo's are next in development but if you see something that can be improved please let me know!
+If you see something that can be improved, preferably one of the todo's above, submit a pull request.
 
-It would make me really happy to know someone else benefits from this, so if it helps you out let me know!
-
-Many thanks to Michael Clark for his expertise and help. If you're here let me know so I can link to and credit you.
+Many thanks to Michael Clark for his expertise and help. If you're here let me know so I can link to you.
 

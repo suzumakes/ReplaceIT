@@ -8,7 +8,6 @@ Many Thanks for Michael Clark.
 TO DO
 
 1. Limit recursion to 1 level
-2. Call these options from ReplaceInFolder
 ====================
 
 #>
@@ -22,11 +21,36 @@ Param (
   [string]$Start,
   [string]$End,
   [string]$NewStart,
-  [string]$NewEnd,
-  [switch]$Log
+  [string]$NewEnd
 )
 
+Function LogIt {
+
+  Param (
+    [bool]$Log,
+    $Text
+  )
+
+  $LogFileName = ( Get-Variable -Name LogFile -Scope Global ).Value
+
+  If ( $Log ) {
+    $DateTime = Get-Date -Format "MM/dd/yyyy HH:mm"
+    $Output = $DateTime + "`t" + $Text
+    $Output | Out-File $LogFileName -Append
+  }
+
+}
+
+  $Log = ( Get-Variable -name LogIt -scope global ).value
+  $TimeStamp = Get-Date -Format "MMdd_HHmm"
+
+  $CurDir = $PWD.ToString()
+  $LogFileName = $CurDir + "\ReplaceIt_" + $TimeStamp + ".log"
+
+  Set-Variable -Name LogFile -Value $LogFileName -Scope Global
+
 Function SuperScript {
+
   Param (
     $FileContents,
     $Pattern,
@@ -34,8 +58,7 @@ Function SuperScript {
     $End,
     $NewStart,
     $NewEnd,
-    $File,
-    $Log
+    $File
   )
 
   $MyMatches = $FileContents | Select-String -Pattern $Pattern -AllMatches
@@ -43,29 +66,25 @@ Function SuperScript {
   $Update = $false
 
   ForEach ( $Item in $MyMatches ) {
+
     $Update = $true
     $ThisMatch = $Item -Match $Pattern
 
-    $ReplaceWith = $NewStart + $Matches[1] + $NewEnd
-    $FileContents = $FileContents -Replace [regex]::escape( $Item ), $ReplaceWith
+    If ( $matches.Count -gt 0 ) {
 
-    If ( $Log ) {
-      $logfile = ".\ReplaceITLog-" + $timestamp + ".txt"
-      "Replaced $Item --> $ReplaceWith" | out-file $logfile -append
-    }
+      $ReplaceWith = $NewStart + $Matches[1] + $NewEnd
+      $FileContents = $FileContents -Replace [regex]::escape( $Item ), $ReplaceWith
 
-    If ( $Update ) {
-      $FileContents|set-content $file
+      LogIt -Log $Log -Text "Replaced $Item --> $ReplaceWith"
+
+      If ( $Update ) {
+        $FileContents|set-content $file
+      }
     }
   }
 }
-  
-$FileContents = get-content $file -Erroraction silentlycontinue -ErrorVariable NotFound
 
-If ( $NotFound.Count -eq "1" ) {
-  write-host "$file not found -- Please check location and filename"
-  break
-}
+$FileContents = get-content $file -Erroraction silentlycontinue -ErrorVariable NotFound
 
 $SearchString = "$Find"
 
@@ -75,15 +94,11 @@ if ( !( $AllMatches ) ) {
 
   $Found = $fileContents -match "$searchstring"
 
-  If ( $Log ) {
-    $logfile = ".\ReplaceITLog-" + $timestamp + ".txt"
-  }
-
   $newfile = $file + ".bak"
 
   If ( $Found ) {
 
-    $replacewith = $FileContents -replace $SearchString,$Replace
+    $replacewith = $FileContents -replace $SearchString, $Replace
 
     if ( !( test-path $newfile ) ) {
       copy-item $file $newfile 
@@ -92,22 +107,17 @@ if ( !( $AllMatches ) ) {
 
     $replacewith|set-content $file
     
-    If ( $Log ) {
-      "Replaced all $find with $Replace" | out-file $logfile -append
-    }
-
+    LogIt -Log $Log -Text "Replaced all $find with $Replace"
+    
   } Else {
 
-    If ( $Log ) {
-      "$find not found" | out-file $logfile -append
-    }
+    LogIt -Log $Log -Text "$find not found"
 
-}
-
+  }
 }
 
 Else {
-  write-host "Replacing Superscripts and Subscripts"
-  SuperScript -FileContents $FileContents -Pattern $Pattern -Start $Start -End $End -NewStart $NewStart -NewEnd $NewEnd -File $File
+  LogIt -Log $Log -Text "Replacing Superscripts and Subscripts"
+  SuperScript -FileContents $FileContents -Pattern $Pattern -Start $Start -End $End -NewStart $NewStart -NewEnd $NewEnd -File $File -Log $Log
 }
 

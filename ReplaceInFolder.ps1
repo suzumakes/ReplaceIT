@@ -9,14 +9,19 @@ TO DO
 
 1. Table Formatting
 2. Bullets to Lists
-3. Better super and subscript checking
+3. Better  Super/Subscript checking
 4. Strict case sensitivity for Foreign Language Characters
 ====================
 
 #>
 
-Param ( $Folder )
+Param (
+  $Folder,
+  [switch]$Log
+)
 
+Set-Variable -name LogIt -value $Log -scope global
+ 
 $Folders = Get-ChildItem $Folder
 
 ForEach ( $Child in $Folders ) {
