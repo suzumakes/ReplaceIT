@@ -9,8 +9,9 @@ TO DO
 
 1. Table Formatting
 2. Bullets to Lists
-3. Better  Super/Subscript checking
-4. Strict case sensitivity for Foreign Language Characters
+3. Better super and subscript checking
+4. Image replacement
+5. Limit recursion to 1 level
 ====================
 
 #>
@@ -20,15 +21,15 @@ Param (
   [switch]$Log
 )
 
-Set-Variable -name LogIt -value $Log -scope global
- 
+Set-Variable -Name LogIT -value $Log -scope Global
+
 $Folders = Get-ChildItem $Folder
 
 ForEach ( $Child in $Folders ) {
   write-host "$Child"
 }
 
-$Response = read-host "Convert these files? (Y/n)"
+$Response = read-host "convert these files? (Y/n)"
 
 If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
 
@@ -52,7 +53,7 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
 
         If ( $Extensions.Contains( $FileExtension ) -and $FileExtension -gt "" ) {
 
-          # Arrange all lines to end with closing tags
+          # arrange all lines to end with closing tags
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n" -Replace "`r`n"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n" -Replace "`r`n"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n" -Replace " `r`n"
@@ -60,13 +61,13 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -Find " `r`n" -Replace " "
           .\ReplaceIT.ps1 -File $Child.FullName -Find "</span>" -Replace "</span>`r`n"
 
-          # Standardize Superscript Tags
+          # standardize superscript tags
           .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)2.5pt'>" -Replace "position:relative;top:-4.5pt'>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)4.0pt'>" -Replace "position:relative;top:-4.5pt'>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)4.5pt'>" -Replace "position:relative;top:-4.5pt'>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)5.0pt'>" -Replace "position:relative;top:-4.5pt'>"
 
-          # Insert Superscripts
+          # insert superscripts
           $Start = "position:relative;top:-4.5pt'>"
           $End = "</span>"
           $Pattern = $Start + "(.*?)" + $End
@@ -74,12 +75,12 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           $NewEnd = "</sup></span>"
           .\ReplaceIT.ps1 -File $Child.FullName -AllMatches -Start $Start -End $End -Pattern $Pattern -NewStart $NewStart -NewEnd $NewEnd
 
-          # Standardize Subscript Tags
+          # standardize subscript tags
           .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)2.0pt'>" -Replace "position:relative;top:2.0pt'>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)3.0pt'>" -Replace "position:relative;top:2.0pt'>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)5.5pt'>" -Replace "position:relative;top:2.0pt'>"
 
-          # Insert Subscripts
+          # insert subscripts
           $Start = "position:relative;top:2.0pt'>"
           $End = "</span>"
           $Pattern = $Start + "(.*?)" + $End
@@ -89,22 +90,22 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
 
           .\ReplaceIT.ps1 -File $Child.FullName -Find "</span>`r`n" -Replace "</span>"
 
-          # Removes class, align, width, and style attributes, borders and cellpadding and spacing, span tags, and empty <p> tags
+          # removes class, align, width, and style attributes, borders and cellpadding and spacing, span tags, and empty <p> tags
           .\ReplaceIT.ps1 -File $Child.FullName -Find "\s+class=[^ >]*|\s+align=[^ >]*|\s+width=[^ >]*|\s+valign=[^ >]*|\s+style='+[^']*'|</?span+\s+[^>]*>|</span>|&nbsp;|<p></p>|\s+border=[^ >]*|\s+cellpadding=[^ >]*|\s+cellspacing=[^ >]*" -Replace ""
 
-          # Removes style declaration, leftover empty and nested <p>, <b>, and <i> tags, divs, and breaks
+          # removes style declaration, leftover empty and nested <p>, <b>, and <i> tags, divs, and breaks
           .\ReplaceIT.ps1 -File $Child.FullName -Find "<style>(.*`r`n)*</style>|<p></p>|</b><b>|</i><i>|<div>|</div>|<br clear=all>" -Replace ""
 
-          # Change <b> and <i> to <strong> and <em>
+          # change <b> and <i> to <strong> and <em>
           .\ReplaceIT.ps1 -File $Child.FullName -Find "<i>" -Replace "<em>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "</i>" -Replace "</em>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "<b>" -Replace "<strong>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "</b>" -Replace "</strong>"
 
-          # M$ Spacing Character
+          # M$ spacing character
           .\ReplaceIT.ps1 -File $Child.FullName -Find " " -Replace ""
 
-          # M$ Specific ASCII to HTML 128 - 159
+          # M$ specific ASCII to HTML 128 - 159
           .\ReplaceIT.ps1 -File $Child.FullName -Find "€" -Replace "&#8364;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "&#128;" -Replace "&#8364;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "‚" -Replace "&#8218;"
@@ -132,21 +133,21 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "Ž" -Replace "&#381;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "&#142;" -Replace "&#381;"
 
-          # Uncomment to eliminate single "Smart Quotes"
+          # uncomment to eliminate single "Smart Quotes"
           # .\ReplaceIT.ps1 -File $Child.FullName -Find "‘|’" -Replace "'"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "‘" -Replace "&#8216;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "&#145;" -Replace "&#8216;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "’" -Replace "&#8217;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "&#146;" -Replace "&#8217;"
 
-          # Uncomment to eliminate "Smart Quotes"
+          # uncomment to eliminate "Smart Quotes"
           # .\ReplaceIT.ps1 -File $Child.FullName -Find '“|”' -Replace '"'
           .\ReplaceIT.ps1 -File $Child.FullName -Find '“' -Replace "&#8220;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "&#147;" -Replace "&#8220;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find '”' -Replace "&#8221;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "&#148;" -Replace "&#8221;"
 
-          # Bullets
+          # bullets
           .\ReplaceIT.ps1 -File $Child.FullName -Find "•" -Replace "&#8226;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "&#149;" -Replace "&#8226;"
 
@@ -168,9 +169,9 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "&#158;" -Replace "&#382;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "Ÿ" -Replace "&#376;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "&#159;" -Replace "&#376;"
-          # END M$ Specific ASCII to HTML 128 - 159
+          # END M$ specific ASCII to HTML 128 - 159
 
-          # Remove Line Breaks
+          # remove line breaks
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n `r`n" -Replace "`r`n"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
@@ -178,7 +179,7 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
 
-          # Fewer Line Breaks
+          # fewer line breaks
           # .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n" -Replace "`r`n"
 
           # ASCII codes to HTML
@@ -214,43 +215,73 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "¾" -Replace "&#190;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "¿" -Replace "&#191;"
 
-          # Foreign Language Characters
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "Þ" -Replace "&#222;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ß" -Replace "&#223;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "à" -Replace "&#224;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "á" -Replace "&#225;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "â" -Replace "&#226;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ã" -Replace "&#227;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ä" -Replace "&#228;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "å" -Replace "&#229;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "æ" -Replace "&#230;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ç" -Replace "&#231;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "è" -Replace "&#232;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "é" -Replace "&#233;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ê" -Replace "&#234;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ë" -Replace "&#235;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ì" -Replace "&#236;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "í" -Replace "&#237;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "î" -Replace "&#238;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ï" -Replace "&#239;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ð" -Replace "&#240;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ñ" -Replace "&#241;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ò" -Replace "&#242;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ó" -Replace "&#243;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ô" -Replace "&#244;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "õ" -Replace "&#245;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ö" -Replace "&#246;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "÷" -Replace "&#247;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ø" -Replace "&#248;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ù" -Replace "&#249;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ú" -Replace "&#250;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "û" -Replace "&#251;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ü" -Replace "&#252;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ý" -Replace "&#253;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "þ" -Replace "&#254;"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "ÿ" -Replace "&#255;"
+          # foreign language characters.
+          .\CMatch.ps1 -File $Child.FullName -Find "À" -Replace "&#192;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Á" -Replace "&#193;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Â" -Replace "&#194;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ã" -Replace "&#195;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ä" -Replace "&#196;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Å" -Replace "&#197;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Æ" -Replace "&#198;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ç" -Replace "&#199;"
+          .\CMatch.ps1 -File $Child.FullName -Find "È" -Replace "&#200;"
+          .\CMatch.ps1 -File $Child.FullName -Find "É" -Replace "&#201;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ê" -Replace "&#202;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ë" -Replace "&#203;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ì" -Replace "&#204;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Í" -Replace "&#205;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Î" -Replace "&#206;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ï" -Replace "&#207;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ð" -Replace "&#208;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ñ" -Replace "&#209;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ò" -Replace "&#210;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ó" -Replace "&#211;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ô" -Replace "&#212;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Õ" -Replace "&#213;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ö" -Replace "&#214;"
+          .\CMatch.ps1 -File $Child.FullName -Find "×" -Replace "&#215;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ø" -Replace "&#216;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ù" -Replace "&#217;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ú" -Replace "&#218;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Û" -Replace "&#219;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ü" -Replace "&#220;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Ý" -Replace "&#221;"
+          .\CMatch.ps1 -File $Child.FullName -Find "Þ" -Replace "&#222;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ß" -Replace "&#223;"
+          .\CMatch.ps1 -File $Child.FullName -Find "à" -Replace "&#224;"
+          .\CMatch.ps1 -File $Child.FullName -Find "á" -Replace "&#225;"
+          .\CMatch.ps1 -File $Child.FullName -Find "â" -Replace "&#226;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ã" -Replace "&#227;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ä" -Replace "&#228;"
+          .\CMatch.ps1 -File $Child.FullName -Find "å" -Replace "&#229;"
+          .\CMatch.ps1 -File $Child.FullName -Find "æ" -Replace "&#230;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ç" -Replace "&#231;"
+          .\CMatch.ps1 -File $Child.FullName -Find "è" -Replace "&#232;"
+          .\CMatch.ps1 -File $Child.FullName -Find "é" -Replace "&#233;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ê" -Replace "&#234;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ë" -Replace "&#235;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ì" -Replace "&#236;"
+          .\CMatch.ps1 -File $Child.FullName -Find "í" -Replace "&#237;"
+          .\CMatch.ps1 -File $Child.FullName -Find "î" -Replace "&#238;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ï" -Replace "&#239;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ð" -Replace "&#240;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ñ" -Replace "&#241;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ò" -Replace "&#242;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ó" -Replace "&#243;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ô" -Replace "&#244;"
+          .\CMatch.ps1 -File $Child.FullName -Find "õ" -Replace "&#245;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ö" -Replace "&#246;"
+          .\CMatch.ps1 -File $Child.FullName -Find "÷" -Replace "&#247;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ø" -Replace "&#248;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ù" -Replace "&#249;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ú" -Replace "&#250;"
+          .\CMatch.ps1 -File $Child.FullName -Find "û" -Replace "&#251;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ü" -Replace "&#252;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ý" -Replace "&#253;"
+          .\CMatch.ps1 -File $Child.FullName -Find "þ" -Replace "&#254;"
+          .\CMatch.ps1 -File $Child.FullName -Find "ÿ" -Replace "&#255;"
 
-          # Remove leftover "position:relative;top:-4.5pt'>" and "position:relative;top:2.0pt'>"
+          # remove leftover "position:relative;top:-4.5pt'>" and "position:relative;top:2.0pt'>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:-4.5pt'>|position:relative;top:2.0pt'>" -Replace ""
         }
       }
@@ -258,7 +289,7 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
   }
 } Else {
 
-  write-host "Alright"
+  write-host "alright, if you don't want to"
   break
 
 }

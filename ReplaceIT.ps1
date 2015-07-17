@@ -1,16 +1,4 @@
-<#
 
-This is a Find and Replace PowerShell Script for cleaning Word-Filtered HTML.
-
-Many Thanks for Michael Clark.
-
-====================
-TO DO
-
-1. Limit recursion to 1 level
-====================
-
-#>
 
 Param (
   [string]$File,
@@ -24,7 +12,7 @@ Param (
   [string]$NewEnd
 )
 
-Function LogIt {
+Function LogIT {
 
   Param (
     [bool]$Log,
@@ -38,14 +26,13 @@ Function LogIt {
     $Output = $DateTime + "`t" + $Text
     $Output | Out-File $LogFileName -Append
   }
-
 }
 
-  $Log = ( Get-Variable -name LogIt -scope global ).value
-  $TimeStamp = Get-Date -Format "MMdd_HHmm"
+  $Log = ( Get-Variable -name LogIT -scope Global ).value
+  $TimeStamp = Get-Date -Format "dd_HH"
 
   $CurDir = $PWD.ToString()
-  $LogFileName = $CurDir + "\ReplaceIt_" + $TimeStamp + ".log"
+  $LogFileName = $CurDir + "\ReplaceIT_" + $TimeStamp + ".log"
 
   Set-Variable -Name LogFile -Value $LogFileName -Scope Global
 
@@ -68,56 +55,55 @@ Function SuperScript {
   ForEach ( $Item in $MyMatches ) {
 
     $Update = $true
-    $ThisMatch = $Item -Match $Pattern
+    $ThisMatch = $Item -match $Pattern
 
     If ( $matches.Count -gt 0 ) {
 
       $ReplaceWith = $NewStart + $Matches[1] + $NewEnd
-      $FileContents = $FileContents -Replace [regex]::escape( $Item ), $ReplaceWith
+      $FileContents = $FileContents -replace [regex]::escape( $Item ), $ReplaceWith
 
-      LogIt -Log $Log -Text "Replaced $Item --> $ReplaceWith"
-
-      If ( $Update ) {
-        $FileContents|set-content $file
-      }
+      LogIT -Log $Log -Text "replaced $Item --> $ReplaceWith"
     }
+  }
+
+  If ( $Update ) {
+    $FileContents|set-content $File
   }
 }
 
-$FileContents = get-content $file -Erroraction silentlycontinue -ErrorVariable NotFound
+$FileContents = get-content $File -Erroraction silentlycontinue -ErrorVariable NotFound
 
 $SearchString = "$Find"
 
 if ( !( $AllMatches ) ) {
 
-  $FileContents = ( [string]::join( "`r`n",$filecontents ) )
+  $FileContents = ( [string]::join( "`r`n",$FileContents ) )
 
-  $Found = $fileContents -match "$searchstring"
+  $Found = $FileContents -match "$SearchString"
 
-  $newfile = $file + ".bak"
+  $NewFile = $File + ".bak"
 
   If ( $Found ) {
 
-    $replacewith = $FileContents -replace $SearchString, $Replace
+    $ReplaceWith = $FileContents -replace $SearchString, $Replace
 
-    if ( !( test-path $newfile ) ) {
-      copy-item $file $newfile 
-      write-host "Saved backup to $newfile"
+    if ( !( test-path $NewFile ) ) {
+      copy-item $File $NewFile 
+      write-host "saved backup to $NewFile"
     }
 
-    $replacewith|set-content $file
-    
-    LogIt -Log $Log -Text "Replaced all $find with $Replace"
-    
+    $ReplaceWith|set-content $File
+
+    LogIT -Log $Log -Text "replaced all $Find with $Replace"
+
   } Else {
 
-    LogIt -Log $Log -Text "$find not found"
-
+    LogIT -Log $Log -Text "$Find not found"
   }
 }
 
 Else {
-  LogIt -Log $Log -Text "Replacing Superscripts and Subscripts"
+  LogIT -Log $Log -Text "start of replacing super/subscripts"
   SuperScript -FileContents $FileContents -Pattern $Pattern -Start $Start -End $End -NewStart $NewStart -NewEnd $NewEnd -File $File -Log $Log
 }
 

@@ -19,6 +19,8 @@ Cuts away most of M$'s Word's attempts at HTML styling, properly tags ~90% of Su
 
 Formats the resulting code into something readable and workable.
 
+Case sensitive replacement of foreign language characters.
+
 ###Options
 
 	.\ReplaceInFolder.ps1 .\TargetDirectory -log
@@ -31,7 +33,7 @@ Log - Logs all operations to a logfile in the current directory.
 2. Table Formatting
 3. Bullets to Lists
 4. Better Super/Subscript checking
-5. Strict case sensitivity for Foreign Language Characters
+5. Image replacement
 
 ###Clone Me
 
