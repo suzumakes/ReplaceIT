@@ -283,6 +283,9 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
 
           # remove leftover "position:relative;top:-4.5pt'>" and "position:relative;top:2.0pt'>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:-4.5pt'>|position:relative;top:2.0pt'>" -Replace ""
+
+          # replace M$ images with placeholder
+          .\ReplaceIT.ps1 -File $Child.FullName -Find '<img(.*)">' -Replace '<img src="placeholder.jpg">'
         }
       }
     }

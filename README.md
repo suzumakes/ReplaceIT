@@ -2,30 +2,33 @@
 
 There are a million reasons NOT to use Regex to parse HTML.
 
-Word-Filtered HTML is a different story. If you have to parse this garbage you probably don't have a lot of other options. These scripts will help immensely.
+Word-Filtered HTML is a different story. If you have to parse this garbage you probably don't have a lot of other options. These scripts help immensely.
 
-This is a set of PowerShell Scripts, just put ReplaceInFolder and ReplaceIT in a directory together and open PowerShell.
+ReplaceInFolder calls ReplaceIT and CMatch so place them in a directory together and launch PowerShell.
 
 	cd C:\Users\YourUser\YourFilePath\ReplaceIT\
 	.\ReplaceInFolder.ps1 .\YourFolder--or--File
 
 ReplaceIT will list all of the .htm files in your folder, and ask whether or not you would like to convert them.
 
-###Done
-
-Creates a backup of every .htm it converts in the directory you specify. Edit ReplaceInFolder line 49 to add more.
-
-Cuts away most of M$'s Word's attempts at HTML styling, properly tags ~90% of Super/Subscripts.
-
-Formats the resulting code into something readable and workable.
-
-Case sensitive replacement of foreign language characters.
+M$ tries to extract images from Word docs, I'm sure you can guess how good of a job it does. Drop this placeholder image in the same directory as your documents and you should have a much easier time replacing the images you need to.
 
 ###Options
 
 	.\ReplaceInFolder.ps1 .\TargetDirectory -log
 
-Log - Logs all operations to a logfile in the current directory.
+Logs all operations to a logfile in the current directory.
+
+###Finished
+
+* Creates a backup of every .htm it converts in the directory you specify. Need more? Edit ReplaceInFolder line 50
+
+		$Extensions = "/.htm/"
+
+* Cuts away most of M$'s Word's attempts at HTML styling, properly tags ~90% of Super/Subscripts.
+* Case sensitive replacement of foreign language characters.
+* Replaces all M$ Word's extracted image references with a small placeholder.
+* Formats the resulting code into something readable and workable.
 
 ###Todo
 
@@ -33,7 +36,6 @@ Log - Logs all operations to a logfile in the current directory.
 2. Table Formatting
 3. Bullets to Lists
 4. Better Super/Subscript checking
-5. Image replacement
 
 ###Clone Me
 
