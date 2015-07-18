@@ -11,7 +11,7 @@ ReplaceInFolder calls ReplaceIT and CMatch so place them in a directory together
 
 ReplaceIT will list all of the .htm files in your folder, and ask whether or not you would like to convert them.
 
-M$ tries to extract images from Word docs, I'm sure you can guess how good of a job it does. Drop this placeholder image in the same directory as your documents and you should have a much easier time replacing the images you need to.
+M$ tries to extract images from Word docs. I'm sure you can guess how good of a job it does. Drop this placeholder image in the same directory as your documents and you should have a much easier time replacing the images you need to.
 
 ###Options
 
@@ -32,10 +32,10 @@ Logs all operations to a logfile in the current directory.
 
 ###Todo
 
-1. Limit recursion to 1 level
-2. Table Formatting
-3. Bullets to Lists
-4. Better Super/Subscript checking
+* Limit recursion to 1 level
+* Table Formatting
+* Bullets to Lists
+* Better Super/Subscript checking
 
 ###Clone Me
 
