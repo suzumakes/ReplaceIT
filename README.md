@@ -25,7 +25,7 @@ Logs all operations to a logfile in the current directory.
 
 		$Extensions = "/.htm/"
 
-* Cuts away most of M$'s Word's attempts at HTML styling, properly tags ~90% of Super/Subscripts.
+* Cuts away most of M$ Word's attempts at HTML styling, properly tags ~90% of Super/Subscripts.
 * Case sensitive replacement of foreign language characters.
 * Replaces all M$ Word's extracted image references with a small placeholder.
 * Formats the resulting code into something readable and workable.
