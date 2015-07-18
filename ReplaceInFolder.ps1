@@ -5,12 +5,11 @@ This is a Find and Replace PowerShell Script for cleaning Word-Filtered HTML.
 Many Thanks for Michael Clark.
 
 ====================
-TO DO
+TODO
 
 1. Table Formatting
 2. Bullets to Lists
 3. Better super and subscript checking
-4. Image replacement
 5. Limit recursion to 1 level
 ====================
 
