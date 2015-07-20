@@ -5,12 +5,11 @@ This is a Find and Replace PowerShell Script for cleaning Word-Filtered HTML.
 Many Thanks for Michael Clark.
 
 ====================
-TODO
+TO DO
 
-1. Table Formatting
-2. Bullets to Lists
-3. Better super and subscript checking
-5. Limit recursion to 1 level
+1. Format bulleted lists
+2. Better super and subscript checking
+3. Limit recursion to 1 level
 ====================
 
 #>
@@ -284,14 +283,23 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:-4.5pt'>|position:relative;top:2.0pt'>" -Replace ""
 
           # replace M$ images with placeholder
-          .\ReplaceIT.ps1 -File $Child.FullName -Find '<img(.*)">' -Replace '<img src="placeholder.jpg">'
+          .\ReplaceIT.ps1 -File $Child.FullName -Find '<img(.*)">' -Replace '<img class="myimgclass" src="placeholder.jpg">'
+          .\ReplaceIT.ps1 -File $Child.FullName -Find '<p><img(.*)"></p>' -Replace '<img class="myimgclass" src="placeholder.jpg">'
+
+          # basic table formatting
+          .\ReplaceIT.ps1 -File $Child.FullName -Find '<table>' -Replace '<table border="1" align="center" cellpadding="3" cellspacing="0">'
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "</p>\s\s\s<p>" -Replace " "
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "<td>(\s*)<p>" -Replace "<td>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "</p>(\s)*</td>" -Replace "</td>`r`n"
+          
+          
         }
       }
     }
   }
 } Else {
 
-  write-host "alright, if you don't want to"
+  write-host "nothing converted"
   break
 
 }
