@@ -2,7 +2,7 @@
 
 There are a million reasons NOT to use Regex to parse HTML.
 
-However, using Regex on _predicatble_ HTML is totally fine, and it oculd be your best option.
+However, using Regex on _predictable_ HTML is totally fine, and it oculd be your best option.
 
 Even moreso, Word-Filtered HTML is a different story entirely. If you have to parse this garbage, these scripts will help immensely.
 
