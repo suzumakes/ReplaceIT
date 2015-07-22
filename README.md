@@ -2,7 +2,9 @@
 
 There are a million reasons NOT to use Regex to parse HTML.
 
-Word-Filtered HTML is a different story. If you have to parse this garbage you probably don't have a lot of other options. These scripts help immensely.
+However, using Regex on _predicatble_ HTML is totally fine, and it oculd be your best option.
+
+Even moreso, Word-Filtered HTML is a different story entirely. If you have to parse this garbage, these scripts will help immensely.
 
 First, prepare your document correctly. Save your Word document as "Web Page, Filtered (\*.htm;\*.html)".
 

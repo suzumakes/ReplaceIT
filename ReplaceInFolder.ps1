@@ -293,6 +293,11 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
 
           # combine superscript tags
           .\ReplaceIT.ps1 -File $Child.FullName -Find "</sup>`r`n<sup>" -Replace ""
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n<sup>" -Replace "<sup>"
+
+          # combine subscript tags
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "</sub>`r`n<sub>" -Replace ""
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n<sub>" -Replace "<sub>"
         }
       }
     }
