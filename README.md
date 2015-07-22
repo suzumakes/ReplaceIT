@@ -30,7 +30,7 @@ Logs all operations to a logfile in the current directory.
 		$Extensions = "/.htm/"
 
 * Cuts away almost all of M$ Word's attempts at HTML styling.
-* Properly tags ~90% of super/subscripts.
+* Properly tags ~95% of super/subscripts.
 * Case sensitive replacement of foreign language characters.
 * Replaces all M$ Word's attempts at extracted images with a placeholder image.
 * Formats tables with basic alignment, padding, and spacing.
@@ -38,9 +38,8 @@ Logs all operations to a logfile in the current directory.
 
 ###Todo
 
-* Limit recursion to 1 level
 * Format bulleted lists
-* Better Super/Subscript checking
+* Even better Super/Subscript checking?
 
 ###Clone Me
 

@@ -2,14 +2,13 @@
 
 This is a Find and Replace PowerShell Script for cleaning Word-Filtered HTML.
 
-Many Thanks for Michael Clark.
+Many Thanks to Michael Clark.
 
 ====================
 TO DO
 
 1. Format bulleted lists
-2. Better super and subscript checking
-3. Limit recursion to 1 level
+2. Even better super/subscript checking?
 ====================
 
 #>
@@ -57,13 +56,14 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n" -Replace " `r`n"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "> `r`n<" -Replace ">`r`n<"
           .\ReplaceIT.ps1 -File $Child.FullName -Find " `r`n" -Replace " "
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "</span>" -Replace "</span>`r`n"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "<span" -Replace "`r`n<span"
 
           # standardize superscript tags
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)2.5pt'>" -Replace "position:relative;top:-4.5pt'>"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)4.0pt'>" -Replace "position:relative;top:-4.5pt'>"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)4.5pt'>" -Replace "position:relative;top:-4.5pt'>"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)5.0pt'>" -Replace "position:relative;top:-4.5pt'>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)2.5(.*)'>" -Replace "position:relative;top:-4.5pt'>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)4.0(.*)'>" -Replace "position:relative;top:-4.5pt'>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)4.5(.*)'>" -Replace "position:relative;top:-4.5pt'>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)5.0(.*)'>" -Replace "position:relative;top:-4.5pt'>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)5.5(.*)'>" -Replace "position:relative;top:-4.5pt'>"
 
           # insert superscripts
           $Start = "position:relative;top:-4.5pt'>"
@@ -74,9 +74,8 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -AllMatches -Start $Start -End $End -Pattern $Pattern -NewStart $NewStart -NewEnd $NewEnd
 
           # standardize subscript tags
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)2.0pt'>" -Replace "position:relative;top:2.0pt'>"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)3.0pt'>" -Replace "position:relative;top:2.0pt'>"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)5.5pt'>" -Replace "position:relative;top:2.0pt'>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)2.0(.*)'>" -Replace "position:relative;top:2.0pt'>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)3.0(.*)'>" -Replace "position:relative;top:2.0pt'>"
 
           # insert subscripts
           $Start = "position:relative;top:2.0pt'>"
@@ -86,7 +85,7 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           $NewEnd = "</sub></span>"
           .\ReplaceIT.ps1 -File $Child.FullName -AllMatches -Start $Start -End $End -Pattern $Pattern -NewStart $NewStart -NewEnd $NewEnd
 
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "</span>`r`n" -Replace "</span>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n<span" -Replace "<span"
 
           # removes class, align, width, and style attributes, borders and cellpadding and spacing, span tags, and empty <p> tags
           .\ReplaceIT.ps1 -File $Child.FullName -Find "\s+class=[^ >]*|\s+align=[^ >]*|\s+width=[^ >]*|\s+valign=[^ >]*|\s+style='+[^']*'|</?span+\s+[^>]*>|</span>|&nbsp;|<p></p>|\s+border=[^ >]*|\s+cellpadding=[^ >]*|\s+cellspacing=[^ >]*" -Replace ""
@@ -291,8 +290,9 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "</p>\s\s\s<p>" -Replace " "
           .\ReplaceIT.ps1 -File $Child.FullName -Find "<td>(\s*)<p>" -Replace "<td>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "</p>(\s)*</td>" -Replace "</td>`r`n"
-          
-          
+
+          # combine superscript tags
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "</sup>`r`n<sup>" -Replace ""
         }
       }
     }
