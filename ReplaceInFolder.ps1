@@ -4,12 +4,12 @@ This is a Find and Replace PowerShell Script for cleaning Word-Filtered HTML.
 
 Many Thanks to Michael Clark.
 
-====================
+==============================
 TO DO
 
 1. Format bulleted lists
 2. Even better super/subscript checking?
-====================
+==============================
 
 #>
 
@@ -59,29 +59,29 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "<span" -Replace "`r`n<span"
 
           # standardize superscript tags
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)2.5(.*)'>" -Replace "position:relative;top:-4.5pt'>"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)4.0(.*)'>" -Replace "position:relative;top:-4.5pt'>"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)4.5(.*)'>" -Replace "position:relative;top:-4.5pt'>"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)5.0(.*)'>" -Replace "position:relative;top:-4.5pt'>"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)5.5(.*)'>" -Replace "position:relative;top:-4.5pt'>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)2.5(.*)'>" -Replace "insertsuper'>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)4.0(.*)'>" -Replace "insertsuper'>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)4.5(.*)'>" -Replace "insertsuper'>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)5.0(.*)'>" -Replace "insertsuper'>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)5.5(.*)'>" -Replace "insertsuper'>"
 
           # insert superscripts
-          $Start = "position:relative;top:-4.5pt'>"
+          $Start = "insertsuper'>"
           $End = "</span>"
           $Pattern = $Start + "(.*?)" + $End
-          $NewStart = "position:relative;top:-4.5pt'><sup>"
+          $NewStart = "insertsuper'><sup>"
           $NewEnd = "</sup></span>"
           .\ReplaceIT.ps1 -File $Child.FullName -AllMatches -Start $Start -End $End -Pattern $Pattern -NewStart $NewStart -NewEnd $NewEnd
 
           # standardize subscript tags
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)2.0(.*)'>" -Replace "position:relative;top:2.0pt'>"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:(.*)relative;(.*)top:(.*)3.0(.*)'>" -Replace "position:relative;top:2.0pt'>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)2.0(.*)'>" -Replace "insertsub'>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)3.0(.*)'>" -Replace "insertsub'>"
 
           # insert subscripts
-          $Start = "position:relative;top:2.0pt'>"
+          $Start = "insertsub'>"
           $End = "</span>"
           $Pattern = $Start + "(.*?)" + $End
-          $NewStart = "position:relative;top:2.0pt'><sub>"
+          $NewStart = "insertsub'><sub>"
           $NewEnd = "</sub></span>"
           .\ReplaceIT.ps1 -File $Child.FullName -AllMatches -Start $Start -End $End -Pattern $Pattern -NewStart $NewStart -NewEnd $NewEnd
 
@@ -278,8 +278,8 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\CMatch.ps1 -File $Child.FullName -Find "þ" -Replace "&#254;"
           .\CMatch.ps1 -File $Child.FullName -Find "ÿ" -Replace "&#255;"
 
-          # remove leftover "position:relative;top:-4.5pt'>" and "position:relative;top:2.0pt'>"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:-4.5pt'>|position:relative;top:2.0pt'>" -Replace ""
+          # remove leftover "insertsuper'>|insertsub'>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "insertsuper'>|insertsub'>" -Replace ""
 
           # replace M$ images with placeholder
           .\ReplaceIT.ps1 -File $Child.FullName -Find '<img(.*)">' -Replace '<img class="myimgclass" src="placeholder.jpg">'
@@ -291,11 +291,9 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "<td>(\s*)<p>" -Replace "<td>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "</p>(\s)*</td>" -Replace "</td>`r`n"
 
-          # combine superscript tags
+          # combine super/subscript tags
           .\ReplaceIT.ps1 -File $Child.FullName -Find "</sup>`r`n<sup>" -Replace ""
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n<sup>" -Replace "<sup>"
-
-          # combine subscript tags
           .\ReplaceIT.ps1 -File $Child.FullName -Find "</sub>`r`n<sub>" -Replace ""
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n<sub>" -Replace "<sub>"
         }
