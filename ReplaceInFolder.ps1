@@ -2,7 +2,7 @@
 
 This is a Find and Replace PowerShell Script for cleaning Word-Filtered HTML.
 
-Many Thanks to Michael Clark.
+Many thanks to Michael Clark.
 
 ==============================
 TO DO
@@ -296,6 +296,10 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n<sup>" -Replace "<sup>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "</sub>`r`n<sub>" -Replace ""
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n<sub>" -Replace "<sub>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find '</sup>\)' -Replace ')</sup>'
+          .\ReplaceIT.ps1 -File $Child.FullName -Find '\(<sup>' -Replace '<sup>('
+          .\ReplaceIT.ps1 -File $Child.FullName -Find '</sub>\)' -Replace ')</sub>'
+          .\ReplaceIT.ps1 -File $Child.FullName -Find '\(<sub>' -Replace '</sub>('
         }
       }
     }
