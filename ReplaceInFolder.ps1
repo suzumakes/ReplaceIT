@@ -282,14 +282,14 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "insertsuper'>|insertsub'>" -Replace ""
 
           # replace M$ images with placeholder
-          .\ReplaceIT.ps1 -File $Child.FullName -Find '<img(.*)">' -Replace '<img class="myimgclass" src="placeholder.jpg">'
-          .\ReplaceIT.ps1 -File $Child.FullName -Find '<p><img(.*)"></p>' -Replace '<img class="myimgclass" src="placeholder.jpg">'
+          .\ReplaceIT.ps1 -File $Child.FullName -Find '<img(.*)">' -Replace '<img class="myimgclass" src="images/placeholder.jpg">'
+          .\ReplaceIT.ps1 -File $Child.FullName -Find '<p><img(.*)"></p>' -Replace '<img class="myimgclass" src="images/placeholder.jpg">'
 
           # basic table formatting
           .\ReplaceIT.ps1 -File $Child.FullName -Find '<table>' -Replace '<table border="1" align="center" cellpadding="3" cellspacing="0">'
           .\ReplaceIT.ps1 -File $Child.FullName -Find "</p>\s\s\s<p>" -Replace " "
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "<td>(\s*)<p>" -Replace "<td>"
-          .\ReplaceIT.ps1 -File $Child.FullName -Find "</p>(\s)*</td>" -Replace "</td>`r`n"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "<td>\s+<p>" -Replace "`r`n<td>"
+          .\ReplaceIT.ps1 -File $Child.FullName -Find "</p>\s+</td>" -Replace "</td>"
 
           # combine super/subscript tags
           .\ReplaceIT.ps1 -File $Child.FullName -Find "</sup>`r`n<sup>" -Replace ""
