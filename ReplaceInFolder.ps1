@@ -74,6 +74,7 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -AllMatches -Start $Start -End $End -Pattern $Pattern -NewStart $NewStart -NewEnd $NewEnd
 
           # standardize subscript tags
+          # .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)1.5(.*)'>" -Replace "insertsub'>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)2.0(.*)'>" -Replace "insertsub'>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)3.0(.*)'>" -Replace "insertsub'>"
 
@@ -282,8 +283,8 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "insertsuper'>|insertsub'>" -Replace ""
 
           # replace M$ images with placeholder
-          .\ReplaceIT.ps1 -File $Child.FullName -Find '<img(.*)">' -Replace '<img class="myimgclass" src="images/placeholder.jpg">'
-          .\ReplaceIT.ps1 -File $Child.FullName -Find '<p><img(.*)"></p>' -Replace '<img class="myimgclass" src="images/placeholder.jpg">'
+          .\ReplaceIT.ps1 -File $Child.FullName -Find '<img(.*)">' -Replace '<img class="myimgclass" src="images/image000.jpg" alt="" title="">'
+          .\ReplaceIT.ps1 -File $Child.FullName -Find '<p><img(.*)"></p>' -Replace '<img class="myimgclass" src="images/image000.jpg" alt="" title="">'
 
           # basic table formatting
           .\ReplaceIT.ps1 -File $Child.FullName -Find '<table>' -Replace '<table border="1" align="center" cellpadding="3" cellspacing="0">'
@@ -300,6 +301,17 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -Find '\(<sup>' -Replace '<sup>('
           .\ReplaceIT.ps1 -File $Child.FullName -Find '</sub>\)' -Replace ')</sub>'
           .\ReplaceIT.ps1 -File $Child.FullName -Find '\(<sub>' -Replace '</sub>('
+          
+          # bullets to lists
+          .\ReplaceIT.ps1 -File $Child.FullName -Find '<p>&#183;' -Replace '<li>'
+          .\ReplaceIT.ps1 -File $Child.FullName -Find '<p>&#8226;' -Replace '<li>'
+
+          $Start = "<li>"
+          $End = "</p>"
+          $Pattern = $Start + "(.*?)" + $End
+          $NewStart = "<li>"
+          $NewEnd = "</li>"
+          .\replaceit.ps1 -File $Child.FullName -AllMatches -Start $Start -End $End -Pattern $Pattern -NewStart $NewStart -NewEnd $NewEnd
         }
       }
     }
