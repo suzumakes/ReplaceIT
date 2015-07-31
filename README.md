@@ -36,11 +36,12 @@ Logs all operations to a logfile in the current directory.
 * Case sensitive replacement of foreign language characters.
 * Replaces all M$ Word's attempts at extracted images with a placeholder image.
 * Formats tables with basic alignment, padding, and spacing.
+* Exchanges p tags with bullets for list items.
+* Applies a class to any internally linked words.
 * Formats the resulting code into something readable and workable.
 
 ###Todo
 
-* Format bulleted lists
 * Even better Super/Subscript checking?
 
 ###Clone Me

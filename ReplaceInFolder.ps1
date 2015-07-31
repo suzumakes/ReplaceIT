@@ -312,6 +312,9 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           $NewStart = "<li>"
           $NewEnd = "</li>"
           .\replaceit.ps1 -File $Child.FullName -AllMatches -Start $Start -End $End -Pattern $Pattern -NewStart $NewStart -NewEnd $NewEnd
+
+          # title class
+          .\ReplaceIT.ps1 -File $Child.FullName -Find '<p><a name=' -Replace '<p class="title"><a name='
         }
       }
     }
