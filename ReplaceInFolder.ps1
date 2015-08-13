@@ -1,16 +1,13 @@
 <#
-
 This is a Find and Replace PowerShell Script for cleaning Word-Filtered HTML.
-
 Many thanks to Michael Clark.
 
 ==============================
 TO DO
 
-1. Format bulleted lists
-2. Even better super/subscript checking?
+1. better super/subscript checking?
+2. <ul> and <ol>
 ==============================
-
 #>
 
 Param (
@@ -50,7 +47,7 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
 
         If ( $Extensions.Contains( $FileExtension ) -and $FileExtension -gt "" ) {
 
-          # arrange all lines to end with closing tags
+          # arrange all lines to end with closing tags and put <span> tags on new lines
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n" -Replace "`r`n"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n" -Replace "`r`n"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n" -Replace " `r`n"
@@ -86,6 +83,7 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           $NewEnd = "</sub></span>"
           .\ReplaceIT.ps1 -File $Child.FullName -AllMatches -Start $Start -End $End -Pattern $Pattern -NewStart $NewStart -NewEnd $NewEnd
 
+          # bring <span> tags back into line
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n<span" -Replace "<span"
 
           # removes class, align, width, and style attributes, borders and cellpadding and spacing, span tags, and empty <p> tags
@@ -145,7 +143,7 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -Find '”' -Replace "&#8221;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "&#148;" -Replace "&#8221;"
 
-          # bullets
+          # replace bullet icons with HTML codes
           .\ReplaceIT.ps1 -File $Child.FullName -Find "•" -Replace "&#8226;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "&#149;" -Replace "&#8226;"
 
@@ -177,10 +175,10 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
 
-          # fewer line breaks
+          # uncomment for fewer line breaks
           # .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n" -Replace "`r`n"
 
-          # ASCII codes to HTML
+          # special characters to HTML
           .\ReplaceIT.ps1 -File $Child.FullName -Find "¡" -Replace "&#161;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "¢" -Replace "&#162;"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "£" -Replace "&#163;"
@@ -279,7 +277,7 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
           .\CMatch.ps1 -File $Child.FullName -Find "þ" -Replace "&#254;"
           .\CMatch.ps1 -File $Child.FullName -Find "ÿ" -Replace "&#255;"
 
-          # remove leftover "insertsuper'>|insertsub'>"
+          # remove leftover "insertsuper'>" and "insertsub'>"
           .\ReplaceIT.ps1 -File $Child.FullName -Find "insertsuper'>|insertsub'>" -Replace ""
 
           # replace M$ images with placeholder

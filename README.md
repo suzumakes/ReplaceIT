@@ -1,10 +1,6 @@
 # ReplaceIT
 
-There are a million reasons NOT to use Regex to parse HTML.
-
-However, using Regex on _predictable_ HTML is totally fine, and it oculd be your best option.
-
-Even moreso, Word-Filtered HTML is a different story entirely. If you have to parse this garbage, these scripts will help immensely.
+Using Regex on _predictable_ HTML is totally fine, and this works really well. At least for me.
 
 First, prepare your document correctly. Save your Word document as "Web Page, Filtered (\*.htm;\*.html)".
 
@@ -15,9 +11,9 @@ Next, ReplaceInFolder calls ReplaceIT and CMatch so place them in a directory to
 
 ReplaceIT will list all of the .htm files in your folder, and ask whether or not you would like to convert them.
 
-M$ tries to extract images from Word docs. I'm sure you can guess how good of a job it does. Drop this placeholder image in the same directory as your documents and you should have a much easier time replacing the images you need to.
+Drop the images folder in the same directory as your converted file to make replacing your images easier.
 
-If you're using Dreamweaver, click on any paragraph text in the design tab and select all (ctrl+a), cut (ctrl+x), and paste (ctrl+v) to reformat all of your code with consistent line breaks and indentation.
+If you're using Dreamweaver, don't forget you can click on any paragraph text in the design view and select all, cut, and paste to reformat all of your code with consistent line breaks and indentation.
 
 ###Options
 
