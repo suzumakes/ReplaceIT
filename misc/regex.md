@@ -2,45 +2,44 @@
 
 Remove any tag and its contents
 
-	<tag>(.*`r`n)*</tag>
+    <tag>(.*`r`n)*</tag>
 
 Bring tags to the same line
 
-	> `r`n<"
+    > `r`n<"
 
 Remove class attributes
 
-	\s+class=[^ >]*
+    \s+class=[^ >]*
 
 Remove alignment
 
-	\s+align=[^ >]*
+    \s+align=[^ >]*
 
 Remove width
 
-	\s+width=[^ >]*
+    \s+width=[^ >]*
 
 Remove vertical alignment
 
-	\s+valign=[^ >]*
+    \s+valign=[^ >]*
 
 Remove styles
 
-	\s+style='+[^']*'
+    \s+style='+[^']*'
 
 Remove span tags
 
-	</?span+\s+[^>]*>
+    </?span+\s+[^>]*>
 
 Remove borders
 
-	\s+border=[^ >]*
+    \s+border=[^ >]*
 
 Remove cellpadding for tables
 
-	\s+cellpadding=[^ >]*
+    \s+cellpadding=[^ >]*
 
 Remove cellspacing for tables
 
-	\s+cellspacing=[^ >]*
-
+    \s+cellspacing=[^ >]*
