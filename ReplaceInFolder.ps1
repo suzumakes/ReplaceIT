@@ -19,7 +19,9 @@ Set-Variable -Name LogIT -value $Log -scope Global
 $Folders = Get-ChildItem $Folder
 
 ForEach ( $Child in $Folders ) {
-    write-host "$Child"
+    If ( $Child.Extension -eq ".htm" ) {
+        write-host "$Child"
+    }
 }
 
 $Response = read-host "convert these files? (Y/n)"
@@ -282,8 +284,7 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
                     # replace M$ images with placeholder
                     .\ReplaceIT.ps1 -File $Child.FullName -Find '<img(.*)">' -Replace '<img class="myimgclass" src="images/image001.png" alt="" title="">'
                     .\ReplaceIT.ps1 -File $Child.FullName -Find '<p><img(.*)"></p>' -Replace '<img class="myimgclass" src="images/image001.png" alt="" title="">'
-                    # quick dirty fix for XHTML4 validation -- I'll make this prettier later
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find '<img class="myimgclass" src="images/image001.png" alt="" title="">' -Replace '<img class="myimgclass" src="images/image001.png" alt="" title="" />'
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find 'alt="" title="">' -Replace 'alt="" title="" />'
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "<br>" -Replace "<br />"
 
                     # basic table formatting
@@ -291,6 +292,8 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "</p>\s\s\s<p>" -Replace " "
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "<td>\s+<p>" -Replace "`r`n<td>"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "</p>\s+</td>" -Replace "</td>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<td nowrap\s\s\s<p>" -Replace "<td nowrap>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<td nowrap>" -Replace '<td nowrap="nowrap">'
 
                     # combine super/subscript tags
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "</sup>`r`n<sup>" -Replace ""

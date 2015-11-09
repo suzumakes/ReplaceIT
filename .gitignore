@@ -1,8 +1,6 @@
-
-
-# Ignore My Idiocy
-/test/*
-
-# Stupid DS_Store
+# obv
 .DS_Store
+
+# tests
+/test/*
 
