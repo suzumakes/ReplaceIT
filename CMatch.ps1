@@ -46,11 +46,12 @@ if ( !( $AllMatches ) ) {
         $ReplaceWith = $FileContents -replace $SearchString, $Replace
 
         if ( !( test-path $NewFile ) ) {
-            copy-item $File $NewFile
-            write-host "saved backup to $NewFile"
+          copy-item $File $NewFile
+          write-host "saved backup to $NewFile"
         }
 
         $ReplaceWith|set-content $File
+
         LogIT -Log $Log -Text "replaced all $Find with $Replace"
 
     } Else {
