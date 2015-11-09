@@ -30,8 +30,8 @@ Logs all operations to a logfile in the current directory.
 * Replaces Foreign Language Characters with ASCII equivalients (case-sensitive)
 * Replaces all images with a placeholder
 * Basic table formatting
-* Identifies bulleted lists as <li> items (you will need to add \<ul\>|\<ol\> tags)
-* Adds "title" class to linked <p> elements
+* Identifies bulleted lists as \<li\> items (you will need to add \<ul\>|\<ol\> tags)
+* Adds "title" class to linked \<p\> elements
 
 ###Todo
 
