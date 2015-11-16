@@ -303,7 +303,7 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
                     .\ReplaceIT.ps1 -File $Child.FullName -Find '</sup>\)' -Replace ')</sup>'
                     .\ReplaceIT.ps1 -File $Child.FullName -Find '\(<sup>' -Replace '<sup>('
                     .\ReplaceIT.ps1 -File $Child.FullName -Find '</sub>\)' -Replace ')</sub>'
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find '\(<sub>' -Replace '</sub>('
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find '\(<sub>' -Replace '<sub>('
 
                     # bullets to lists
                     .\ReplaceIT.ps1 -File $Child.FullName -Find '<p>&#183;' -Replace '<li>'
