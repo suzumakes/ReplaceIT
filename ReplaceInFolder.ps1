@@ -1,12 +1,6 @@
 <#
-==============================
-This is a Find and Replace PowerShell Script for cleaning Word-Filtered HTML.
-Many thanks to Michael Clark.
-
-Todo
-
-1. <ul> and <ol>
-==============================
+    Find and Replace PowerShell Script for cleaning Word-Filtered HTML.
+    Much love for Michael Clark.
 #>
 
 Param (
@@ -19,6 +13,7 @@ Set-Variable -Name LogIT -value $Log -scope Global
 $Folders = Get-ChildItem $Folder
 
 ForEach ( $Child in $Folders ) {
+
     If ( $Child.Extension -eq ".htm" ) {
         write-host "$Child"
     }
@@ -48,61 +43,116 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
 
                 If ( $Extensions.Contains( $FileExtension ) -and $FileExtension -gt "" ) {
 
-                    # arrange all lines to end with closing tags and put <span> tags on new lines
+                    # all lines end with closing tags
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n" -Replace "`r`n"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n" -Replace "`r`n"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n" -Replace " `r`n"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "> `r`n<" -Replace ">`r`n<"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find " `r`n" -Replace " "
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<span" -Replace "`r`n<span"
 
-                    # standardize superscript tags
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)2.5(.*)'>" -Replace "insertsuper'>"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)4.0(.*)'>" -Replace "insertsuper'>"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)4.5(.*)'>" -Replace "insertsuper'>"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)5.0(.*)'>" -Replace "insertsuper'>"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)5.5(.*)'>" -Replace "insertsuper'>"
+                    # expand span tags
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<span " -Replace "`r`n<span "
 
-                    # insert superscripts
+                    # replace images
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<span[^>]*><img[^>]*></span>" -Replace '<img class="myimgclass" src="images/image001.png" alt="" title="">'
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<img[^>]*>" -Replace '<img class="myimgclass" src="images/image001.png" alt="" title="" />'
+
+                    # dedupe super and subscripts
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<sup><span[^>]*>" -Replace "<sup>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<sub><span[^>]*>" -Replace "<sub>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "</span></sup>" -Replace "</sup>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "</span></sub>" -Replace "</sub>"
+
+                    # superscripts => identify and insert
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:[^1]*1.0[^>]*>" -Replace "insertsuper'>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:[^2]*2.5[^>]*>" -Replace "insertsuper'>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:[^4]*4.0[^>]*>" -Replace "insertsuper'>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:[^4]*4.5[^>]*>" -Replace "insertsuper'>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:[^5]*5.0[^>]*>" -Replace "insertsuper'>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:[^5]*5.5[^>]*>" -Replace "insertsuper'>"
+
                     $Start = "insertsuper'>"
                     $End = "</span>"
-                    $Pattern = $Start + "(.*?)" + $End
+                    $Pattern = $Start + "(.*?)" + $End    # [^<]*
                     $NewStart = "insertsuper'><sup>"
                     $NewEnd = "</sup></span>"
                     .\ReplaceIT.ps1 -File $Child.FullName -AllMatches -Start $Start -End $End -Pattern $Pattern -NewStart $NewStart -NewEnd $NewEnd
 
-                    # standardize subscript tags
-                    # .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)1.5(.*)'>" -Replace "insertsub'>"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)2.0(.*)'>" -Replace "insertsub'>"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:(.*)3.0(.*)'>" -Replace "insertsub'>"
+                    # subscripts => identify  and insert
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:[^1]*1.5[^>]*>" -Replace "insertsub'>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:[^2]*2.0[^>]*>" -Replace "insertsub'>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:[^3]*3.0[^>]*>" -Replace "insertsub'>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "position:relative;top:[^3]*3.5[^>]*>" -Replace "insertsub'>"
 
-                    # insert subscripts
                     $Start = "insertsub'>"
                     $End = "</span>"
-                    $Pattern = $Start + "(.*?)" + $End
+                    $Pattern = $Start + "(.*?)" + $End    # [^<]*
                     $NewStart = "insertsub'><sub>"
                     $NewEnd = "</sub></span>"
                     .\ReplaceIT.ps1 -File $Child.FullName -AllMatches -Start $Start -End $End -Pattern $Pattern -NewStart $NewStart -NewEnd $NewEnd
 
-                    # bring <span> tags back into line
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n<span" -Replace "<span"
+                    # collapse span tags
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n<span " -Replace "<span "
 
-                    # removes class, align, width, and style attributes, borders and cellpadding and spacing, span tags, and empty <p> tags
+                    # class | align | width | valign | style, | span | &nbsp; -- empty <p> tags -- border | cellpadding | cellspacing
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "\s+class=[^ >]*|\s+align=[^ >]*|\s+width=[^ >]*|\s+valign=[^ >]*|\s+style='+[^']*'|</?span+\s+[^>]*>|</span>|&nbsp;|<p></p>|\s+border=[^ >]*|\s+cellpadding=[^ >]*|\s+cellspacing=[^ >]*" -Replace ""
 
-                    # removes style declaration, leftover empty and nested <p>, <b>, and <i> tags, divs, and breaks
+                    # style -- empty <p> | <b> | <i> -- div | br clearall
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "<style>(.*`r`n)*</style>|<p></p>|</b><b>|</i><i>|<div>|</div>|<br clear=all>" -Replace ""
 
-                    # change <b> and <i> to <strong> and <em>
+                    # <b> and <i> => <strong> and <em>
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n</i>" -Replace "</i>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n</b>" -Replace "</b>"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "<i>" -Replace "<em>"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "</i>" -Replace "</em>"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "<b>" -Replace "<strong>"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "</b>" -Replace "</strong>"
 
-                    # M$ spacing character
+                    # table formatting
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find '<table>' -Replace '<table border="1" align="center" cellpadding="3" cellspacing="0">'
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<td nowrap>" -Replace '<td nowrap="nowrap">'
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<tr height=0>" -Replace "<tr>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<td" -Replace "`r`n<td"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<tr" -Replace "`r`n<tr"
+
+                    # combine adjacent super/subscript tags
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "insertsuper'>|insertsub'>" -Replace ""
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "</sup>`r`n<sup>" -Replace ""
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n<sup>" -Replace "<sup>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "</sub>`r`n<sub>" -Replace ""
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n<sub>" -Replace "<sub>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find '</sup>\)' -Replace ')</sup>'
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find '\(<sup>' -Replace '<sup>('
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find '</sub>\)' -Replace ')</sub>'
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find '\(<sub>' -Replace '<sub>('
+
+                    # bullets => lists
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "•" -Replace "&#8226;"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "&#149;" -Replace "&#8226;"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "·" -Replace "&#183;"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<p>&#183;" -Replace "<li>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<p>&#8226;" -Replace "<li>"
+
+                    $Start = "<li>"
+                    $End = "</p>"
+                    $Pattern = $Start + "(.*?)" + $End
+                    $NewStart = "<li>"
+                    $NewEnd = "</li>"
+                    .\replaceit.ps1 -File $Child.FullName -AllMatches -Start $Start -End $End -Pattern $Pattern -NewStart $NewStart -NewEnd $NewEnd
+
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<li>" -Replace "<ul><li>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "</li>" -Replace "</li></ul>"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "</ul>`r`n<ul>" -Replace "`r`n"
+
+                    # FHWA
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find '<html>' -Replace '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">'
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<br>" -Replace "<br />"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find '<p><a name=' -Replace '<p class="title"><a name='
+
+                    # M$ space character !IMPORTANT!
                     .\ReplaceIT.ps1 -File $Child.FullName -Find " " -Replace ""
 
-                    # M$ specific ASCII to HTML 128 - 159
+                    # START M$ ASCII to HTML 128 - 159
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "€" -Replace "&#8364;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "&#128;" -Replace "&#8364;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "‚" -Replace "&#8218;"
@@ -130,23 +180,20 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "Ž" -Replace "&#381;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "&#142;" -Replace "&#381;"
 
-                    # uncomment to eliminate single "Smart Quotes"
-                    # .\ReplaceIT.ps1 -File $Child.FullName -Find "‘|’" -Replace "'"
+                    # .\ReplaceIT.ps1 -File $Child.FullName -Find "‘|’" -Replace "'"    # uncomment => eliminate single "Smart Quotes"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "‘" -Replace "&#8216;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "&#145;" -Replace "&#8216;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "’" -Replace "&#8217;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "&#146;" -Replace "&#8217;"
 
-                    # uncomment to eliminate "Smart Quotes"
-                    # .\ReplaceIT.ps1 -File $Child.FullName -Find '“|”' -Replace '"'
+                    # .\ReplaceIT.ps1 -File $Child.FullName -Find '“|”' -Replace '"'    # uncomment => eliminate "Smart Quotes"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find '“' -Replace "&#8220;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "&#147;" -Replace "&#8220;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find '”' -Replace "&#8221;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "&#148;" -Replace "&#8221;"
 
-                    # replace bullet icons with HTML codes
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "•" -Replace "&#8226;"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "&#149;" -Replace "&#8226;"
+                    # .\ReplaceIT.ps1 -File $Child.FullName -Find "•" -Replace "&#8226;"    # bullets => lists
+                    # .\ReplaceIT.ps1 -File $Child.FullName -Find "&#149;" -Replace "&#8226;"    # bullets => lists
 
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "–" -Replace "&#8211;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "&#150;" -Replace "&#8211;"
@@ -166,20 +213,9 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "&#158;" -Replace "&#382;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "Ÿ" -Replace "&#376;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "&#159;" -Replace "&#376;"
-                    # END M$ specific ASCII to HTML 128 - 159
+                    # END M$ ASCII to HTML 128 - 159
 
-                    # remove line breaks
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n `r`n" -Replace "`r`n"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
-
-                    # uncomment for fewer line breaks
-                    # .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n" -Replace "`r`n"
-
-                    # special characters to HTML
+                    # ASCII to HTML
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "¡" -Replace "&#161;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "¢" -Replace "&#162;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "£" -Replace "&#163;"
@@ -202,7 +238,7 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "´" -Replace "&#180;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "µ" -Replace "&#181;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "¶" -Replace "&#182;"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "·" -Replace "&#183;"
+                    # .\ReplaceIT.ps1 -File $Child.FullName -Find "·" -Replace "&#183;"    # bullets => lists
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "¸" -Replace "&#184;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "¹" -Replace "&#185;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "º" -Replace "&#186;"
@@ -212,7 +248,7 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "¾" -Replace "&#190;"
                     .\ReplaceIT.ps1 -File $Child.FullName -Find "¿" -Replace "&#191;"
 
-                    # foreign language characters.
+                    # foreign language characters
                     .\CMatch.ps1 -File $Child.FullName -Find "À" -Replace "&#192;"
                     .\CMatch.ps1 -File $Child.FullName -Find "Á" -Replace "&#193;"
                     .\CMatch.ps1 -File $Child.FullName -Find "Â" -Replace "&#194;"
@@ -278,46 +314,11 @@ If ( $Response -eq "" -or $Response -eq "y" -or $Response -eq "Y" ) {
                     .\CMatch.ps1 -File $Child.FullName -Find "þ" -Replace "&#254;"
                     .\CMatch.ps1 -File $Child.FullName -Find "ÿ" -Replace "&#255;"
 
-                    # remove leftover "insertsuper'>" and "insertsub'>"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "insertsuper'>|insertsub'>" -Replace ""
-
-                    # replace M$ images with placeholder
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find '<img(.*)">' -Replace '<img class="myimgclass" src="images/image001.png" alt="" title="">'
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find '<p><img(.*)"></p>' -Replace '<img class="myimgclass" src="images/image001.png" alt="" title="">'
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find 'alt="" title="">' -Replace 'alt="" title="" />'
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<br>" -Replace "<br />"
-
-                    # basic table formatting
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find '<table>' -Replace '<table border="1" align="center" cellpadding="3" cellspacing="0">'
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "</p>\s\s\s<p>" -Replace " "
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<td>\s+<p>" -Replace "`r`n<td>"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "</p>\s+</td>" -Replace "</td>"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<td nowrap\s\s\s<p>" -Replace "<td nowrap>"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "<td nowrap>" -Replace '<td nowrap="nowrap">'
-
-                    # combine super/subscript tags
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "</sup>`r`n<sup>" -Replace ""
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n<sup>" -Replace "<sup>"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "</sub>`r`n<sub>" -Replace ""
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n<sub>" -Replace "<sub>"
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find '</sup>\)' -Replace ')</sup>'
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find '\(<sup>' -Replace '<sup>('
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find '</sub>\)' -Replace ')</sub>'
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find '\(<sub>' -Replace '<sub>('
-
-                    # bullets to lists
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find '<p>&#183;' -Replace '<li>'
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find '<p>&#8226;' -Replace '<li>'
-
-                    $Start = "<li>"
-                    $End = "</p>"
-                    $Pattern = $Start + "(.*?)" + $End
-                    $NewStart = "<li>"
-                    $NewEnd = "</li>"
-                    .\replaceit.ps1 -File $Child.FullName -AllMatches -Start $Start -End $End -Pattern $Pattern -NewStart $NewStart -NewEnd $NewEnd
-
-                    # title class
-                    .\ReplaceIT.ps1 -File $Child.FullName -Find '<p><a name=' -Replace '<p class="title"><a name='
+                    # line breaks
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n `r`n" -Replace "`r`n"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
+                    .\ReplaceIT.ps1 -File $Child.FullName -Find "`r`n`r`n`r`n" -Replace "`r`n`r`n"
                 }
             }
         }
